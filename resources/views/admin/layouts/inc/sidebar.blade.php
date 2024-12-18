@@ -155,6 +155,7 @@
                                             href="{{ route('admin.single-enroll.index') }}"
                                             class="">{{ trans_choice('module_single_enroll', 1) }}</a></li>
                                 @endcanany
+                                
 
                                 @canany(['student-enroll-group'])
                                     <li class="{{ Request::is('admin/student/group-enroll*') ? 'active' : '' }}"><a
