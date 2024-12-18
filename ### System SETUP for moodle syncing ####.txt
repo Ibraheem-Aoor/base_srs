@@ -1,0 +1,32 @@
+### System SETUP for moodle syncing ####
+1- manual transfer sessions using created routes "transfer" "on local".
+1- setup semestets.
+2- setup sessions.
+3- sync courses using sync routes
+3- manual transfer for users "on local"
+4- no need to sync enrolls. because it's already setted on moodle.
+
+/**
+    Notes:
+        1- When Siwtching sessions. no need to re enroll users.
+        2- when the user is enrolled using singleEnroll or courseAddDrop. the activation time depends on the session start time.
+        3- when swtiching session. we must trasnfer all the courses offered in that session to moodel withing that session "category"
+           because we are not doing this if the session is not current.
+
+**/
+
+
+
+-- create schedule show only offered courses for the selected session.
+-- user update check enrollments update.
+
+
+## CASES TO HANDLE ##
+    1- removed offer courses we shoud suspend all enrollments to it.(from addDrop and singEnroll)
+
+
+MISSED COURSES ON SRS:
+DIS901
+DOC912 # DOC912B exists on srs
+
+#25 been synced with SRS of 32 total courses
