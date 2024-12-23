@@ -261,6 +261,7 @@ Route::middleware(['auth:web', 'XSS'])->name('admin.')->namespace('Admin')->pref
 
     // Staff Routes
     Route::resource('staff/user', 'UserController');
+    Route::get('staff/user/add-to-moodle/{user}', 'UserController@addToMoodle')->name('user.add_to_moodle');
     Route::get('staff/user-status/{id}', 'UserController@status')->name('user.status');
     Route::post('staff/user-send-password/{id}', 'UserController@sendPassword')->name('user.send-password');
     // Route::get('staff/user-print-password/{id}', 'UserController@printPassword')->name('user.print-password');

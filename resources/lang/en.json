@@ -645,6 +645,7 @@
     "field_twilio_number": "Twilio Sender Number",
     "field_mail_address": "Mail Address",
     "field_password": "Password",
+    "field_mdl_password": "Moodle Password",
     "field_old_password": "Old Password",
     "field_new_password": "New Password",
     "field_confirm_password": "Confirm Password",

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Services\Moodle\StudentService;
 use Illuminate\Support\Facades\Crypt;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
@@ -19,12 +20,14 @@ use App\Models\Province;
 use App\Models\Document;
 use App\Models\Program;
 use App\Services\Moodle\TeacherService;
+use App\Services\Moodle\UserService;
 use App\User;
 use Toastr;
 use Hash;
 use Auth;
 use Mail;
 use DB;
+use Throwable;
 
 class UserController extends Controller
 {
@@ -38,11 +41,11 @@ class UserController extends Controller
     public function __construct()
     {
         // Module Data
-        $this->title     = trans_choice('module_staff', 1);
-        $this->route     = 'admin.user';
-        $this->view      = 'admin.user';
-        $this->path      = 'user';
-        $this->access    = 'user';
+        $this->title = trans_choice('module_staff', 1);
+        $this->route = 'admin.user';
+        $this->view = 'admin.user';
+        $this->path = 'user';
+        $this->access = 'user';
 
 
         $this->middleware('permission:' . $this->access . '-view|' . $this->access . '-create|' . $this->access . '-edit|' . $this->access . '-delete', ['only' => ['index', 'show', 'status', 'sendPassword']]);
@@ -62,11 +65,11 @@ class UserController extends Controller
     public function index(Request $request)
     {
         //
-        $data['title']     = $this->title;
-        $data['route']     = $this->route;
-        $data['view']      = $this->view;
-        $data['path']      = $this->path;
-        $data['access']    = $this->access;
+        $data['title'] = $this->title;
+        $data['route'] = $this->route;
+        $data['view'] = $this->view;
+        $data['path'] = $this->path;
+        $data['access'] = $this->access;
 
 
         if (!empty($request->role) || $request->role != null) {
@@ -142,9 +145,9 @@ class UserController extends Controller
     public function create()
     {
         //
-        $data['title']     = $this->title;
-        $data['route']     = $this->route;
-        $data['view']      = $this->view;
+        $data['title'] = $this->title;
+        $data['route'] = $this->route;
+        $data['view'] = $this->view;
 
         $data['roles'] = Role::orderBy('name', 'asc')->get();
         $data['departments'] = Department::where('status', '1')
@@ -336,10 +339,10 @@ class UserController extends Controller
     public function show($id)
     {
         //
-        $data['title']     = $this->title;
-        $data['route']     = $this->route;
-        $data['view']      = $this->view;
-        $data['path']      = $this->path;
+        $data['title'] = $this->title;
+        $data['route'] = $this->route;
+        $data['view'] = $this->view;
+        $data['path'] = $this->path;
 
         $data['row'] = User::findOrFail($id);
 
@@ -359,10 +362,10 @@ class UserController extends Controller
     public function edit($id)
     {
         //
-        $data['title']     = $this->title;
-        $data['route']     = $this->route;
-        $data['view']      = $this->view;
-        $data['path']      = $this->path;
+        $data['title'] = $this->title;
+        $data['route'] = $this->route;
+        $data['view'] = $this->view;
+        $data['path'] = $this->path;
 
         $data['row'] = $user = User::find($id);
         $data['documents'] = Document::whereHas('users', function ($query) use ($id) {
@@ -697,10 +700,10 @@ class UserController extends Controller
     public function import(Request $request)
     {
         //
-        $data['title']     = $this->title;
-        $data['route']     = $this->route;
-        $data['view']      = $this->view;
-        $data['access']    = $this->access;
+        $data['title'] = $this->title;
+        $data['route'] = $this->route;
+        $data['view'] = $this->view;
+        $data['access'] = $this->access;
 
         //
         $data['departments'] = Department::where('status', '1')
@@ -735,4 +738,24 @@ class UserController extends Controller
 
         return redirect()->back();
     }
+
+    public function addToMoodle(User $user, UserService $user_service)
+    {
+        try {
+            $moodle_passwrod = generate_moodle_password();
+            $moodle_username = generate_moodle_username($user->first_name, $user->last_name);
+            $moodle_user = $user_service->store($user, $moodle_passwrod);
+            $user->id_on_moodle = $moodle_user[0]['id'];
+            $user->moodle_password = $moodle_passwrod;
+            $user->moodle_username = $moodle_username;
+            $user->save();
+            Toastr::success(__('msg_updated_successfully'), __('msg_success'));
+        } catch (Throwable $e) {
+            Toastr::error(__('msg_created_error'), __('msg_error'));
+        }
+        return redirect()->back();
+
+    }
+
+
 }

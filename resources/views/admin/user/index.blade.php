@@ -198,10 +198,20 @@
 
                                                     @can($access . '-password-print')
                                                         <a href="#" class="btn btn-dark btn-sm"
-                                                        data-email="{{ $row->email }}"
+                                                            data-email="{{ $row->email }}"
                                                             data-password="{{ Crypt::decryptString($row->password_text) }}"
                                                             onclick="copyData(this); return false;"><i class="fas fa-print"></i>
                                                             {{ __('field_password') }}</a>
+
+                                                        @if (isset($row->id_on_moodle))
+                                                            <a  class="btn btn-dark btn-sm"
+                                                                data-email="{{ $row->email }}"
+                                                                data-password="{{ $row->moodle_password }}"
+                                                                data-username="{{ $row->moodle_username }}"
+                                                                onclick="copyData(this); return false;"><i
+                                                                    class="fas fa-print"></i>
+                                                                {{ __('field_mdl_password') }}</a>
+                                                        @endif
                                                     @endcan
 
                                                     <form action="{{ route($route . '.send-password', [$row->id]) }}"
@@ -234,7 +244,12 @@
                                                                 data-bs-target="#changePasswordModal-{{ $row->id }}">
                                                                 <i class="fas fa-key"></i>
                                                             </button>
-
+                                                            @if (!isset($row->id_on_moodle))
+                                                                <a href="{{ route($route . '.add_to_moodle', $row->id) }}"
+                                                                    class="btn btn-icon btn-info btn-sm">
+                                                                    <i class="fas fa-user-plus"></i>
+                                                                </a>
+                                                            @endif
                                                             <!-- Include Password Change modal -->
                                                             @include($view . '.password-change')
                                                         @endcan
@@ -275,8 +290,12 @@
             const email = button.getAttribute('data-email');
             const password = button.getAttribute('data-password');
 
-            const textToCopy = `Email: ${email}\nPassword: ${password}`;
+            const username = button.getAttribute('data-username');
 
+            var textToCopy = `Email: ${email}\nPassword: ${password}`;
+            if (username) {
+                textToCopy = `Email: ${email}\nUsername: ${username}\nPassword: ${password}`;
+            }
             const textarea = document.createElement('textarea');
             textarea.value = textToCopy;
             document.body.appendChild(textarea);
