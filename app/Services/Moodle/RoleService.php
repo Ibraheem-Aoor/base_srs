@@ -25,13 +25,13 @@ class RoleService extends BaseService
     /**
      * Get Student Role Id From Moodle
      */
-    public function getStudentRoleId()
+    public function getRoleId($searched_role = 'student'): mixed
     {
         $roles = $this->getAllRoles();
         if(is_array($roles))
         {
             foreach ($roles as $role) {
-                if (@$role['shortname'] == 'student' || @$role['archetype'] == 'student') {
+                if (@$role['shortname'] == $searched_role || @$role['archetype'] == $searched_role) {
                     return $role['id'];
                 }
             }

@@ -44,7 +44,6 @@ class BaseService
             // dd($endpoint);
             return isset($response) && !isset($response['exception'], $response['warnings']) ? $response : throw new \Exception($response['exception'] . '||Message: ' . $response['message']);
         } catch (Throwable $e) {
-            // dd($e);
             logError(e: $e, method: __METHOD__, class: get_class($this));
         }
     }
@@ -64,7 +63,7 @@ class BaseService
                 $endpoint
             )->json();
             // This Response Is Nullable.
-            return !isset($response['exception']) ? $response : throw new \Exception($response['exception'] . '||Message: ' . $response['message']);
+            return (!isset($response['exception']) || @$response['errorcode'] == 'Message was not sent.' ) ? $response : throw new \Exception($response['exception'] . '||Message: ' . $response['message']);
         } catch (Throwable $e) {
             logError(e: $e, method: __METHOD__, class: get_class($this), custom_message: __('Moodle_Error'));
             throw new \Exception($e);

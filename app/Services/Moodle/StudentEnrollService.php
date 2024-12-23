@@ -27,7 +27,7 @@ class StudentEnrollService extends BaseService
     {
         $course_service = new CourseService();
         //bring the student role id  from moodle
-        $student_role_id = $this->role_service->getStudentRoleId();
+        $student_role_id = $this->role_service->getRoleId();
         // Create the data array for the POST request
         $enrolments = [];
         foreach ($student_enroll->subjects as $subject) {
@@ -66,7 +66,7 @@ class StudentEnrollService extends BaseService
     public function sync(StudentEnroll $student_enroll, array $requested_subjects)
     {
         // Retrieve the student role ID from Moodle
-        $student_role_id = $this->role_service->getStudentRoleId();
+        $student_role_id = $this->role_service->getRoleId();
 
         // Get currently enrolled subjects
         $currently_enrolled_subjects = $student_enroll->subjects()->pluck('id')->toArray();
@@ -115,7 +115,7 @@ class StudentEnrollService extends BaseService
     public function bulkUnEnroll($id, $enrollment)
     {
         // Retrieve the student role ID from Moodle
-        $student_role_id = $this->role_service->getStudentRoleId();
+        $student_role_id = $this->role_service->getRoleId();
         foreach ($enrollment->subjects as $subject) {
             $subject_id_on_moodle = MoodleSubjectSession::query()->where('subject_id', $subject->id)->where('session_id', $enrollment->session_id)->first()->id_on_moodle;
             $enrolments[] = [

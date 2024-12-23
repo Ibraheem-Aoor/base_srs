@@ -10,10 +10,13 @@ use App\Models\ClassRoom;
 use App\Models\EnrollSubject;
 use App\Models\Semester;
 use App\Models\Faculty;
+use App\Models\MoodleClassRoutine;
 use App\Models\Session;
 use App\Models\Program;
 use App\Models\Section;
 use App\Models\Subject;
+use App\Services\Moodle\TeacherEnrollService;
+use App\Services\Moodle\TeacherService;
 use App\User;
 use Toastr;
 use DB;
@@ -220,7 +223,7 @@ class ClassRoutineController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, TeacherEnrollService $moodle_teacher_enroll_service)
     {
         // Field Validation
         $request->validate([
@@ -242,7 +245,7 @@ class ClassRoutineController extends Controller
             $program = $request->program;
             $session = $request->session;
             $semester = Session::query()->find($session)->semester_id;
-
+            $class_routine_ids = [];
 
             for ($j = 0; $j < $subject_count; $j++) {
                 $start = $data['start_time'][$j];
@@ -299,15 +302,17 @@ class ClassRoutineController extends Controller
                         ['start_time', $classRoutine->start_time],
                         ['end_time', $classRoutine->end_time],
                     ])->update([
-                        'subject_id' => $data['subject'][$j],
-                        'teacher_id' => $data['teacher'][$j],
-                        'room_id' => $data['room'][$j],
-                        'session_id' => $session,
-                        'semester_id' => $semester,
-                        'start_time' => $data['start_time'][$j],
-                        'end_time' => $data['end_time'][$j],
-                        'day' => $day,
-                    ]);
+                                'subject_id' => $data['subject'][$j],
+                                'teacher_id' => $data['teacher'][$j],
+                                'room_id' => $data['room'][$j],
+                                'session_id' => $session,
+                                'semester_id' => $semester,
+                                'start_time' => $data['start_time'][$j],
+                                'end_time' => $data['end_time'][$j],
+                                'day' => $day,
+                            ]);
+
+                    $class_routine_ids[] = $classRoutine->id;
 
                     Toastr::success(__('msg_updated_successfully'), __('msg_success'));
                 } else {
@@ -318,8 +323,8 @@ class ClassRoutineController extends Controller
                         $subject = Subject::query()->with('programs')->find($data['subject'][$j]);
                         foreach ($subject->programs as $subject_program) {
                             $enroll_subject = EnrollSubject::query()->where('program_id', $subject_program->id)
-                                ->where('session_id', $session)->whereHas('subjects', function($query)use($subject){
-                                    $query->where('id' , $subject->id);
+                                ->where('session_id', $session)->whereHas('subjects', function ($query) use ($subject) {
+                                    $query->where('id', $subject->id);
                                 })->exists();
                             if ($enroll_subject) {
                                 $classRoutine = new ClassRoutine;
@@ -333,6 +338,8 @@ class ClassRoutineController extends Controller
                                 $classRoutine->end_time = $data['end_time'][$j];
                                 $classRoutine->day = $day;
                                 $classRoutine->save();
+                                $class_routine_ids[] = $classRoutine->id;
+
                             }
                         }
 
@@ -348,12 +355,14 @@ class ClassRoutineController extends Controller
                 for ($i = 0; $i < $delete_routine_count; $i++) {
                     $classRoutine = ClassRoutine::find($data['delete_routine'][$i]);
                     $classRoutine->delete();
-
+                    if(in_array($classRoutine->id, $class_routine_ids)) {
+                        unset($class_routine_ids[array_search($classRoutine->id, $class_routine_ids)]);
+                    }
                     Toastr::success(__('msg_deleted_successfully'), __('msg_success'));
                 }
             }
         }
-
+        $moodle_teacher_enroll_service->sync($class_routine_ids);
         DB::commit();
 
 
