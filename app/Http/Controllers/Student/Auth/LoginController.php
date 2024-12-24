@@ -119,7 +119,7 @@ class LoginController extends Controller
     {
         //validation rules.
         $rules = [
-            'email' => 'required|email|exists:students|min:5|max:191',
+            'email' => 'required|exists:students|min:5|max:191',
             'password' => 'required|string|min:6|max:255',
         ];
 
