@@ -47,7 +47,7 @@
                         <div class="card-body">
                             <h5 class="card-title">{{ __('Omaintec Academy Room') }}</h5>
                             {{-- <p class="card-text">With supporting text below as a natural lead-in to additional content.</p> --}}
-                            <a href="{{ route('admin.moodle.login') }}" class="btn btn-primary">Signin</a>
+                            <a href="{{ route('admin.moodle.login') }}" target="__blank" class="btn btn-primary">Signin</a>
                         </div>
                     </div>
                 </div>
