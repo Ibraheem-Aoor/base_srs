@@ -33,8 +33,7 @@
 
 
 
-                    {{-- @canany(['student-transfer-in-create', 'student-transfer-in-view', 'student-transfer-out-create',
-                        'student-transfer-out-view'])
+                    {{-- @canany(['student-transfer-in-create', 'student-transfer-in-view', 'student-transfer-out-create', 'student-transfer-out-view'])
                         <li
                             class="nav-item pcoded-hasmenu {{ Request::is('admin/admission/student-transfer*') ? 'pcoded-trigger active' : '' }}">
                             <a href="#!" class="nav-link">
@@ -136,10 +135,10 @@
                                 class="">{{ trans_choice('module_student_note', 2) }}</a></li>
                     @endcanany --}}
                     @canany(['student-view', 'student-password-print', 'student-password-change', 'student-card'])
-                                    <li class="{{ Request::is('admin/admission/student') ? 'active' : '' }}"><a
-                                            href="{{ route('admin.student.index') }}"
-                                            class="">{{ trans_choice('module_student', 1) }} {{ __('list') }}</a></li>
-                                @endcanany
+                        <li class="{{ Request::is('admin/admission/student') ? 'active' : '' }}"><a
+                                href="{{ route('admin.student.index') }}"
+                                class="">{{ trans_choice('module_student', 1) }} {{ __('list') }}</a></li>
+                    @endcanany
                     @canany(['student-enroll-single', 'student-enroll-group', 'student-enroll-adddrop',
                         'student-enroll-complete'])
                         <li
@@ -155,7 +154,7 @@
                                             href="{{ route('admin.single-enroll.index') }}"
                                             class="">{{ trans_choice('module_single_enroll', 1) }}</a></li>
                                 @endcanany
-                                
+
 
                                 @canany(['student-enroll-group'])
                                     <li class="{{ Request::is('admin/student/group-enroll*') ? 'active' : '' }}"><a
@@ -348,7 +347,9 @@
 
         @canany(['exam-attendance', 'exam-marking', 'exam-result', 'subject-marking', 'subject-result', 'grade-view',
             'grade-create', 'exam-type-view', 'exam-type-create', 'admit-card-view', 'admit-card-print',
-            'admit-card-download', 'admit-setting-view', 'result-contribution-view'])
+            'admit-card-download', 'admit-setting-view', 'result-contribution-view', 'marksheet-view', 'marksheet-print',
+            'marksheet-download', 'marksheet-setting-view', 'certificate-view', 'certificate-create', 'certificate-print',
+            'certificate-download', 'certificate-template-view', 'certificate-template-create'])
             <li class="nav-item pcoded-hasmenu {{ Request::is('admin/exam*') ? 'pcoded-trigger active' : '' }}">
                 <a href="#!" class="nav-link">
                     <span class="pcoded-micon"><i class="fas fa-file-alt"></i></span>
@@ -401,6 +402,36 @@
                                 href="{{ route('admin.exam-type.index') }}"
                                 class="">{{ trans_choice('module_exam_type', 2) }}</a></li>
                     @endcanany
+                    @canany(['marksheet-view', 'marksheet-print', 'marksheet-download'])
+                    <li class="{{ Request::is('admin/transcript/marksheet-semester*') ? 'active' : '' }}"><a
+                            href="{{ route('admin.marksheet.semester') }}"
+                            class="">{{ trans_choice('module_marksheet_semester', 2) }}</a></li>
+                @endcanany
+
+                @canany(['marksheet-view', 'marksheet-print', 'marksheet-download'])
+                    <li class="{{ Request::is('admin/transcript/marksheet') ? 'active' : '' }}"><a
+                            href="{{ route('admin.marksheet.index') }}"
+                            class="">{{ trans_choice('module_marksheet_total', 2) }}</a></li>
+                @endcanany
+
+                @canany(['marksheet-setting-view'])
+                    <li class="{{ Request::is('admin/transcript/marksheet-setting*') ? 'active' : '' }}"><a
+                            href="{{ route('admin.marksheet-setting.index') }}"
+                            class="">{{ trans_choice('module_marksheet_setting', 1) }}</a></li>
+                @endcanany
+
+                @canany(['certificate-view', 'certificate-create', 'certificate-print', 'certificate-download'])
+                    <li class="{{ Request::is('admin/transcript/certificate*') ? 'active' : '' }}"><a
+                            href="{{ route('admin.certificate.index') }}"
+                            class="">{{ trans_choice('module_certificate', 2) }}</a></li>
+                @endcanany
+
+                @canany(['certificate-template-view', 'certificate-template-create'])
+                    <li class="{{ Request::is('admin/transcript/certificate-template*') ? 'active' : '' }}"><a
+                            href="{{ route('admin.certificate-template.index') }}"
+                            class="">{{ trans_choice('module_certificate_template', 2) }}</a></li>
+                @endcanany
+
 
                     {{-- @canany(['admit-card-view', 'admit-card-print', 'admit-card-download'])
                         <li class="{{ Request::is('admin/exam/admit-card*') ? 'active' : '' }}"><a
@@ -1093,47 +1124,7 @@
             </li>
         @endcanany --}}
 
-        @canany(['marksheet-view', 'marksheet-print', 'marksheet-download', 'marksheet-setting-view',
-            'certificate-view', 'certificate-create', 'certificate-print', 'certificate-download',
-            'certificate-template-view', 'certificate-template-create'])
-            <li class="nav-item pcoded-hasmenu {{ Request::is('admin/transcript*') ? 'pcoded-trigger active' : '' }}">
-                <a href="#!" class="nav-link">
-                    <span class="pcoded-micon"><i class="fas fa-address-card"></i></span>
-                    <span class="pcoded-mtext">{{ trans_choice('module_transcript', 2) }}</span>
-                </a>
-                <ul class="pcoded-submenu">
-                    @canany(['marksheet-view', 'marksheet-print', 'marksheet-download'])
-                        <li class="{{ Request::is('admin/transcript/marksheet-semester*') ? 'active' : '' }}"><a
-                                href="{{ route('admin.marksheet.semester') }}"
-                                class="">{{ trans_choice('module_marksheet_semester', 2) }}</a></li>
-                    @endcanany
 
-                    @canany(['marksheet-view', 'marksheet-print', 'marksheet-download'])
-                        <li class="{{ Request::is('admin/transcript/marksheet') ? 'active' : '' }}"><a
-                                href="{{ route('admin.marksheet.index') }}"
-                                class="">{{ trans_choice('module_marksheet_total', 2) }}</a></li>
-                    @endcanany
-
-                    @canany(['marksheet-setting-view'])
-                        <li class="{{ Request::is('admin/transcript/marksheet-setting*') ? 'active' : '' }}"><a
-                                href="{{ route('admin.marksheet-setting.index') }}"
-                                class="">{{ trans_choice('module_marksheet_setting', 1) }}</a></li>
-                    @endcanany
-
-                    @canany(['certificate-view', 'certificate-create', 'certificate-print', 'certificate-download'])
-                        <li class="{{ Request::is('admin/transcript/certificate*') ? 'active' : '' }}"><a
-                                href="{{ route('admin.certificate.index') }}"
-                                class="">{{ trans_choice('module_certificate', 2) }}</a></li>
-                    @endcanany
-
-                    @canany(['certificate-template-view', 'certificate-template-create'])
-                        <li class="{{ Request::is('admin/transcript/certificate-template*') ? 'active' : '' }}"><a
-                                href="{{ route('admin.certificate-template.index') }}"
-                                class="">{{ trans_choice('module_certificate_template', 2) }}</a></li>
-                    @endcanany
-                </ul>
-            </li>
-        @endcanany
 
         {{-- Reports --}}
         {{-- @canany(['report-student', 'report-subject', 'report-fees', 'report-payroll', 'report-leave', 'report-income', 'report-expense', 'report-library', 'report-hostel', 'report-transport'])
